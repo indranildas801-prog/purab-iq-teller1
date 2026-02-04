@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Purab IQ Teller</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chatbox {
+      width: 350px;
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .messages {
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .user { color: blue; margin: 5px 0; }
+    .bot { color: green; margin: 5px 0; }
+    input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chatbox">
+  <h3>🤖 Purab IQ Teller</h3>
+  <div class="messages" id="messages"></div>
+  <input type="text" id="input" placeholder="Type here..." onkeydown="if(event.key==='Enter') send()">
+</div>
+
+<script>
+  const messages = document.getElementById("messages");
+  let waitingForName = false;
+
+  const letterIQ = {
+    A:100,B:100,C:100,D:90,E:80,F:70,G:60,H:50,
+    I:100,J:70,K:60,L:120,M:120,N:20,O:10,
+    P:80,Q:80,R:40,S:100,T:70,U:150,V:50,
+    W:10,X:70,Y:10,Z:180
+  };
+
+  const zeroIQNames = ["shuvojit","suvo","pritam","raja"];
+
+  function addMessage(text, cls) {
+    const div = document.createElement("div");
+    div.className = cls;
+    div.innerText = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function send() {
+    const input = document.getElementById("input");
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage("You: " + text, "user");
+    input.value = "";
+
+    const lower = text.toLowerCase();
+
+    // Bye messages
+    if (["bye","good bye","goodbye","see you","see you later","tata"].includes(lower)) {
+      addMessage("Purab: See You Again!", "bot");
+      return;
+    }
+
+    // Greeting
+    if (["hi","hello","hey"].includes(lower)) {
+      addMessage("Purab: hello", "bot");
+      return;
+    }
+
+    // Ask IQ
+    if (lower.includes("what is my iq")) {
+      waitingForName = true;
+      addMessage("Purab: send your name", "bot");
+      return;
+    }
+
+    // Name handling
+    if (waitingForName) {
+      waitingForName = false;
+      const name = text;
+      const cleanName = name.toLowerCase();
+
+      if (zeroIQNames.includes(cleanName)) {
+        addMessage("Purab: 0", "bot");
+        return;
+      }
+
+      const firstLetter = name[0].toUpperCase();
+      const letterValue = letterIQ[firstLetter] || 0;
+      const lengthValue = name.length * 10;
+      const totalIQ = letterValue + lengthValue;
+
+      addMessage("Purab: " + totalIQ, "bot");
+      return;
+    }
+
+    // Default reply
+    addMessage("Purab: I am Purab IQ Teller 🤖", "bot");
+  }
+</script>
+
+</body>
+</html>
